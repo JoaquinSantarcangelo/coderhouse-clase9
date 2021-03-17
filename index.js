@@ -1,56 +1,50 @@
 const express = require("express");
-var fs = require("fs");
-
+var bodyParser = require("body-parser");
 const port = 8080;
 const app = express();
 
-//Global Counter
-let itemsCounter = 0;
-let randomItemCounter = 0;
+app.use(bodyParser.json({ type: "application/*+json" }));
 
-const getItems = async () => {
-  const data = await fs.readFileSync("productos.txt", "utf8");
-  
-  // Nota: Esta parte me da error
-  // const aux = JSON.parse(data)
-  // console.log(aux)
-  
-  return [
-    { id: 1, title: "Nombre", price: "Precio", thumbnail: "Url" },
-    { id: 2, title: "Nombrea", price: "Precio", thumbnail: "Url" },
-    { id: 3, title: "Nombre", price: "Precio", thumbnail: "Url" },
-    { id: 4, title: "Nombre", price: "Precio", thumbnail: "Url" },
-  ];
-};
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
-app.get("/items", async (req, res) => {
-  itemsCounter++;
-  const items = await getItems();
+//Variables
+let idCounter = 0;
+let products = [{ id: 0, title: "Title", price: 23, thumbnail: "Thumbnail" }];
 
-  console.log(items);
-  res.json({
-    items: items,
-    cantidad: 2,
-  });
+//Rutas
+
+//GET LISTA COMPLETA
+app.get("/api/productos/listar", (req, res) => {
+  res.json({ products: products });
 });
 
-app.get("/random-item", async (req, res) => {
-  randomItemCounter++;
-  const items = await getItems();
-  const item = items[Math.floor(Math.random() * items.length) + 1];
-  console.log(items);
-  res.json({
-    item,
-  });
+//GET PRODUCTO
+app.get("/api/productos/listar/:id", (req, res) => {
+  if (products[req.params.id]) {
+    res.json({ productInfo: products[req.params.id] });
+  } else {
+    res.json({ error: "No hay productos cargados" });
+  }
 });
 
-app.get("/visitas", async (req, res) => {
-  res.json({
-    visitas: {
-      items: itemsCounter,
-      item: randomItemCounter,
-    },
-  });
+//GUARDAR PRODUCTO
+app.post("/api/productos/guardar", (req, res) => {
+  const { title, price, thumbnail } = req.body;
+
+  const product = {
+    id: idCounter + 1,
+    title: title,
+    price: price,
+    thumbnail: thumbnail,
+  };
+  
+  idCounter++;
+  products.push(product);
+  res.json({ productInfo: product });
 });
 
 app.listen(port, () => {
