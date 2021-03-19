@@ -1,6 +1,0 @@
-[
-  { id: 1, title: "Nombre", price: "Precio", thumbnail: "Url" },
-  { id: 2, title: "Nombrea", price: "Precio", thumbnail: "Url" },
-  { id: 3, title: "Nombre", price: "Precio", thumbnail: "Url" },
-  { id: 4, title: "Nombre", price: "Precio", thumbnail: "Url" },
-];
